@@ -1,0 +1,77 @@
+{% extends 'stocks/base.html' %}
+{% block title %}Detail{% endblock %}
+
+
+{% block content %}
+
+<section>
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col-md-5">
+                <div class="div shadow">
+                    <!-- <button class="uk-button uk-button-default uk-margin-bottom" type="button" uk-toggle="target: +">Toggle YouTube Video</button> -->
+                    <iframe src="https://www.youtube-nocookie.com/embed/c2pz2mlSfXA?autoplay=0&amp;showinfo=0&amp;rel=0&amp;modestbranding=1&amp;playsinline=1" width="1920" height="1080" allowfullscreen uk-responsive uk-video="automute: true"></iframe>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="">
+                    <h4 class=" p-1 m-0"><b>Stock name : {{stocks.stock_name}}</b></h4>
+                    <div class="border rounded p-2 mb-2 bg-gradient bg-primary bg-opacity-50 shadow mb-3">
+                        <div class=" d-flex justify-content-around">
+                            <h5 class="text-light p-1 m-0 "><b>Price : {{stocks.price}}</b></h5>
+                            <h5 class="text-light p-1 m-0 "><b>P/E ratio : {{stocks.pe_ratio}}</b></h5>
+                        </div>
+                        <div class="d-flex justify-content-around">
+                            <h5 class="text-light p-1 m-0 "><b>Market cap : {{stocks.market_cap}}</b></h5>
+                            <h5 class="text-light p-1 m-0 "><b>Volume : {{stocks.volume}}</b></h5>
+                        </div>
+                    </div>
+
+
+                        {% for query in queries %}
+                            <div class="border shadow-sm rounded mb-1 mt-">
+                                <small class="d-flex float-end p-1">{{ query.timestamp }}</small>
+                                <div class="">
+                                    <h5 class="m-2 p-1 bg-gradient bg-info w-25 text-center rounded bg-opacity-25">{{query.stocks}}</h5>
+                                </div>
+                                <p class="m-2"><b>Your query :</b> {{ query.query|truncatechars:30}}</p>
+                            </div>
+                        {% empty %}
+                            <div class="border rounded mb-1">
+                                <p class="m-2"><b>No query to show ... </b></p>
+                            </div>
+                        {% endfor %}
+                        <button class="uk-button uk-button-primary rounded uk-margin-small-right" type="button" uk-toggle="target: #modal-query">Query</button>
+                        <!-- This is the modal -->
+                        <div id="modal-query" class="mt-2" uk-modal>
+                            <div class="uk-modal-dialog uk-modal-body">
+                                <form method="post" action="{% url 'query_id' stocks.id %}">
+                                    {% csrf_token %}
+                                    <fieldset class="uk-fieldset">
+                                
+                                        <legend class="uk-legend text-success">Write your query ...</legend>
+                                
+                                        <div class="uk-margin">
+                                            <input class="uk-input" name="stock_name" type="text" value="{{stocks.stock_name}}" disabled>
+                                            <input class="uk-input" name="stock_name" type="hidden" value="{{stocks.stock_name}}">
+                                        </div>
+                                
+                                        <div class="uk-margin">
+                                            <textarea class="uk-textarea" name="message" rows="5" placeholder="Query ..."></textarea>
+                                        </div>
+
+                                        <p class="uk-text-right">
+                                            <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                                            <button class="uk-button uk-button-primary" type="submit">Save</button>
+                                        </p>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

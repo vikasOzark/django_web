@@ -1,0 +1,30 @@
+{% extends 'stocks/base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<section class="container">
+    <div class="row d-flex justify-content-center mt-3">
+        <div class="col-md-6 ">
+            <div class="">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label">Username</label>
+                      <input type="text" name="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                      <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label">Password</label>
+                      <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+                    </div>
+                    
+                    <p class="m-0 m-1">Don't have a account register now !</a></p>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

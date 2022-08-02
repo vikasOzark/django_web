@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.15.1/dist/css/uikit.min.css" />
+
+    <!-- i  have use defer keyword to load the script file in the end of the page. -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.1/dist/js/uikit.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.1/dist/js/uikit-icons.min.js" defer></script>
+
+    <style>
+        .alert-message{
+            position: absolute;
+            left: 0px;
+            top: 5rem;
+            z-index: 1;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="nav-bar">
+        <nav class="navbar navbar-expand-lg bg-gradient bg-info bg-opacity-10">
+            <div class="container-fluid">
+              <a class="navbar-brand text-decoration-none" href="{% url 'index' %}"><b>StockTech</b></a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
+                  </li>
+                  {% if user.is_authenticated %}
+                    <li class="nav-item p-2 user ">
+                        <b>Welcome, {{user.username}} </b>
+                    </li>
+                    <li class="nav-item d-flex float-end">
+                        <a class="uk-button uk-button-primary opacity-50 rounded" href="{% url 'logout-user' %}" >Logout</a>
+                    </li>
+                {% else %}
+                  <li class="nav-item d-flex float-end">
+                    <a class="uk-button uk-button-primary rounded" href="#modal-center" uk-toggle>Register</a>
+                  </li>
+                  {% endif %}
+
+                </ul>
+                <form class="d-flex" method="get" role="search" action="{% url 'query_slug' %}">
+                  <input class="form-control me-2 rounded-0" type="search" name="search-text" placeholder="Search" aria-label="Search">
+                  <button class="btn btn-outline-success rounded-0" type="submit">Search</button>
+                </form>
+                
+              </div>
+            </div>
+          </nav>
+
+
+            <div id="modal-center" class="uk-flex-top" uk-modal>
+                <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+
+                    <button class="uk-modal-close-default" type="button" uk-close></button>
+
+                    <form class="row g-3"  method="POST"id=register-form>
+                        {% csrf_token %}
+
+                        <div class="col-md-6 col-sm-3">
+                            <label for="inputEmail4" class="form-label">First name</label>
+                            <input id="first_name" type="text" class="form-control rounded-0" id="inputEmail4">
+                          </div>
+                          <div class="col-md-6 col-sm-3">
+                          <label for="inputEmail4" class="form-label">Last name</label>
+                          <input id="last_name" type="text" class="form-control rounded-0" id="inputEmail4">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="inputEmail4" class="form-label">Username</label>
+                            <input id="username" type="text" class="form-control rounded-0" id="inputEmail4">
+                        </div>
+
+                        <div class="col-md-6">
+                          <label for="inputEmail4" class="form-label">Email</label>
+                          <input id="email" type="email" class="form-control rounded-0" id="inputEmail4">
+                        </div>
+
+                        <div class="col-md-6 col-sm-3">
+                          <label for="inputPassword4" class="form-label">Password</label>
+                          <input id="password" type="password" class="form-control rounded-0" id="inputPassword4">
+                        </div>
+                        <div class="col-md-6 col-sm-3">
+                            <label for="inputPassword4" class="form-label">Confirm password</label>
+                            <input id="confirm_password" type="password" class="form-control rounded-0" id="inputPassword4">
+                          </div>
+                        
+                        <div class="col-12">
+                            <p class=m-0>Already have a account <a href="{% url 'login-user' %}"> Click me now !</a></p>
+                        </div>
+                       
+                        <div class="col-12">
+                          <a  class="btn btn-primary rounded-0"id="submit-btn">Sign in</a>
+                        </div>
+                      </form>
+                    
+                </div>
+            </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class=" m-0" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                <p class="alert-info">{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% block content %}{% endblock %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>    
+    // prevent the page from refreshing when the user clicks the submit button.
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    // submit form on enter key press
+   
+    var check = document.getElementById('submit-btn');
+    check.addEventListener('click', function(e){
+        e.preventDefault();
+        console.log('clicked');
+        data = {
+            'first_name': document.getElementById('first_name').value,
+            'last_name': document.getElementById('last_name').value,
+            'username': document.getElementById('username').value,
+            'email': document.getElementById('email').value,
+            'password': document.getElementById('password').value,
+            'confirm_password': document.getElementById('confirm_password').value,
+            'csrfmiddlewaretoken' :  $('input[name="csrfmiddlewaretoken"]').attr('value')
+        };
+        $.ajax({
+            type: 'POST',
+            url: '{% url "register" %}',
+            data: data,
+            dataType: 'json',
+            success: function(data){
+                console.log(data);
+                if(data.success){
+                    window.location.href = '{% url "index" %}';
+                }
+                else{
+                    messages = data.messages;
+                    for(i=0; i<messages.length; i++){
+                        message = messages[i];
+                        uk-alert(message);
+                    }
+                }
+            }
+        });
+    });
+
+    // giving pop up on every 3 mint if user is not authenticated
+        var user = "{{user.is_authenticated}}";
+        if (user == "False") {
+            setTimeout(function(){
+                UIkit.notification("Please log in to continue !", {status: 'warning'});
+            }, 30000);
+            
+        }
+        
+        var user = "{{user.is_authenticated}}";
+        if (user == "False") {
+            setTimeout(function(){
+                UIkit.notification("Please log in to continue !", {status: 'warnng'});
+            }, 60000);
+            
+        }
+
+        var user = "{{user.is_authenticated}}";
+        if (user == "False") {
+            setTimeout(function(){
+                UIkit.notification("Please log in to continue !", {status: 'warnng'});
+            }, 90000);
+            
+        }
+
+    
+
+</script>
+</body>
+</html>

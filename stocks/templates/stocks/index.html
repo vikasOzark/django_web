@@ -1,0 +1,101 @@
+{% extends 'stocks/base.html' %}
+{% block title %}Home{% endblock %}
+
+
+{% block content %}
+<div class="section container">
+    <div class="m-1">
+        <div class="row">
+            {% if user.is_authenticated %}
+            <div class="col-md-8 ">
+                <div class=" mb-1">
+                    <h4 class="text-center p-1 mt-2 "><b>Stocks listing</b></h4>
+                    <table class="table table-success table-striped shadow">
+                        <thead>
+                            <tr class="text-center">
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in stocks %}
+                            <tr class="text-center">
+                                <td>{{stock.stock_name}}</td>
+                                <td>{{stock.price}}</td>
+                                <td>
+                                    <a class="uk-button btn-sm uk-button-primary rounded uk-margin-small-right" href="{% url 'query_id' stock.id %}"  type="button">Detail</a>
+                                    <button class="uk-button uk-button-primary rounded uk-margin-small-right" type="button" uk-toggle="target: #modal-{{stock.id}}">Query</button>
+                                </td>
+                            </tr>
+                                <!-- This is the modal -->
+                                <div id="modal-{{stock.id}}" uk-modal>
+                                    <div class="uk-modal-dialog uk-modal-body">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <fieldset class="uk-fieldset">
+                                        
+                                                <legend class="uk-legend text-success">Write your query ...</legend>
+                                        
+                                                <div class="uk-margin">
+                                                    <input class="uk-input" type="text" value="{{stock.stock_name}}" disabled>
+                                                    <input class="uk-input" name="stock_name" type="hidden" value="{{stock.stock_name}}">
+                                                </div>
+                                        
+                                                <div class="uk-margin">
+                                                    <textarea class="uk-textarea" name="message" rows="5" placeholder="Query ..."></textarea>
+                                                </div>
+
+                                                <p class="uk-text-right">
+                                                    <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                                                    <button class="uk-button uk-button-primary" type="submit">Save</button>
+                                                </p>
+                                            </fieldset>
+                                        </form>
+                                    </div>
+                                </div>
+                            
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                    <a class="border bg-gradient bg-warning p-1 d-flex float-end text-decoration-none rounded text-light mb-2" href="{% url 'index_id' 'next' %}"> Load more </a>
+                    <a class="border bg-gradient bg-warning p-1 text-decoration-none rounded text-light mb-2" href="{% url 'index' %}"> Previous </a>
+
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="col-md-4">
+                <div class=" mb-1 ">
+                    <h4 class="text-center  p-1 mt-2 "><b>Profile</b></h4>
+                    {% if user.is_authenticated %}
+                    <div class="border rounded p-2 shadow">
+                        <h4 class="m-1">Name : {{request.user}}</h4>
+                        <h5 class="m-1">Email : {{request.user.email}}</h5>
+                        <p class="m-0 mt-2">Your recent query</p>
+                        {% for query in queries %}
+                            <div class="border rounded mb-1">
+                                <small class="d-flex float-end p-1">{{ query.timestamp }}</small>
+                                <div class="">
+                                    <h5 class="m-2 p-1 bg-gradient bg-info w-25 text-center rounded bg-opacity-25">{{query.stocks}}</h5>
+                                </div>
+                                <p class="m-2"><b>Your query :</b> {{ query.query|truncatechars:20}}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="border rounded p-2 shadow d-flex justify-content-center">
+                        <h4 class="m-1">Please login to see your profile</h4>
+                        <a class="uk-button uk-button-primary rounded" href="{% url 'login-user' %}">Login</a>
+                    </div>
+                    
+                    {% endif %} 
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}
