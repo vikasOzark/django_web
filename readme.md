@@ -22,7 +22,7 @@ You can change the ``IP`` and ``PORT`` if you like to .
 #
 ``(3). Create a super user or a normal user``
 ```bash
-python3 manage.py creatsuperuser
+python3 manage.py createsuperuser
 ```
 ``Use web page to create a normal account and use.``
 
